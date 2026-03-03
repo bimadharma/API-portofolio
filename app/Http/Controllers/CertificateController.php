@@ -34,9 +34,21 @@ class CertificateController extends Controller
             'title' => 'required|string',
             'issuer' => 'required|string',
             'date' => 'required|date',
+            'file' => 'nullable|file|mimes:pdf,jpg,png|max:2048'
         ]);
 
-        $certificate = Certificate::create($request->all());
+        $filePath = null;
+
+        if ($request->hasFile('file')) {
+            $filePath = $request->file('file')->store('certificates', 'public');
+        }
+
+        $certificate = Certificate::create([
+            'title' => $request->title,
+            'issuer' => $request->issuer,
+            'date' => $request->date,
+            'file_url' => $filePath
+        ]);
 
         return response()->json([
             'message' => 'Certificate created successfully',
@@ -50,11 +62,11 @@ class CertificateController extends Controller
     public function show($id)
     {
         $certificate = Certificate::find($id);
-        
+
         if (!$certificate) {
             return response()->json(['message' => 'Certificate not found'], 404);
         }
-        
+
         return new CertificateResource($certificate);
     }
 

@@ -14,7 +14,9 @@ class CertificateResource extends JsonResource
             'title' => $this->title,
             'issuer' => $this->issuer,
             'date' => $this->date,
-            'file_url' => $this->file_url,
+            'file_url' => $this->file_url
+                ? asset('storage/' . $this->file_url)
+                : null,
         ];
     }
 }
